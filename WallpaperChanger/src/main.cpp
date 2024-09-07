@@ -17,12 +17,12 @@ void change_wallpaper(const std::string& filepath);
 bool is_image(const std::string& image_path);
 std::vector<std::string> read_directory(const std::string& directory_name);
 
-int main() {
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 	std::string config_path = "config.json";
 	change_wallpaper(config_path);
 	return 0;
 }
-
 
 json read_config(const std::string& filepath) {
 	std::ifstream fin(filepath);
@@ -35,9 +35,7 @@ json read_config(const std::string& filepath) {
 	};
 
 	write_config(data, filepath);
-	std::cout << "please edit the config.json file\n";
-	std::cin.get();
-
+	MessageBox(NULL, L"please edit the config.json file", L"WallpaperChanger", MB_OK | MB_ICONINFORMATION);
 	return data;
 }
 
@@ -90,8 +88,10 @@ void change_wallpaper(const std::string& filepath) {
 		set_wallpaper(image_path);
 	}
 	else {
-		std::cout << "Invalid image: " << image_path << std::endl;
-		std::cin.get();
+		std::wstring w_image_path = std::wstring(image_path.begin(), image_path.end());
+		std::wstring message = L"Invalid image: " + w_image_path;
+		MessageBox(NULL, message.c_str(), L"WallpaperChanger", MB_OK | MB_ICONEXCLAMATION);
+		
 	}
 
 	config["index"] = (index + 1) % images.size();
